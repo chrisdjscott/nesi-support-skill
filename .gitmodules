@@ -1,0 +1,3 @@
+[submodule "support-docs"]
+	path = support-docs
+	url = https://github.com/nesi/support-docs
