@@ -1,0 +1,63 @@
+# Mapping of each derivative skill file to the upstream support-docs
+# paths it draws from. The drift script (scripts/upstream_drift.py)
+# reads this file and reports which derivatives need review when the
+# submodule is bumped past the SHA pinned in .upstream-reconciled-sha.
+#
+# Match rules:
+#   - Path ending in "/" is a directory prefix (matches anything under it).
+#   - Path without trailing "/" is an exact file match.
+#
+# Per-package files under references/software/ are auto-matched against
+# docs/Software/Available_Applications/ by lowercasing the stem and
+# stripping underscores. Add an explicit entry below to override the
+# auto-match when the upstream filename diverges (e.g. tensorflow_*).
+
+[map]
+"references/access-and-login.md" = [
+  "docs/Getting_Started/Accessing_the_HPCs/",
+]
+"references/slurm.md" = [
+  "docs/Batch_Computing/Batch_Computing_Guide.md",
+  "docs/Batch_Computing/SLURM-Best_Practice.md",
+  "docs/Batch_Computing/Job_Limits.md",
+  "docs/Batch_Computing/Job_prioritisation.md",
+  "docs/Batch_Computing/Fair_Share.md",
+  "docs/Batch_Computing/Checking_resource_usage.md",
+  "docs/Getting_Started/Cheat_Sheets/Slurm-Reference_Sheet.md",
+]
+"references/slurm-examples.md" = [
+  "docs/Batch_Computing/Job_Arrays.md",
+  "docs/Batch_Computing/Job_Checkpointing.md",
+  "docs/Batch_Computing/Temporary_directories.md",
+  "docs/Batch_Computing/Using_GPUs.md",
+]
+"references/hardware.md" = [
+  "docs/Batch_Computing/Hardware.md",
+]
+"references/filesystems.md" = [
+  "docs/Storage/",
+]
+"references/modules.md" = [
+  "docs/Software/Installing_Applications_Yourself.md",
+  "docs/Software/Software_Installation_Request.md",
+  "docs/Software/Software_Version_Management.md",
+]
+"references/parallel-computing.md" = [
+  "docs/Software/Parallel_Computing/",
+]
+"references/containers.md" = [
+  "docs/Software/Containers/",
+]
+"references/debugging-efficiency.md" = [
+  "docs/Software/Profiling_and_Debugging/",
+  "docs/Getting_Started/Job_efficiency_review.md",
+]
+"references/software/index.md" = [
+  "docs/Software/Available_Applications/",
+]
+"references/software/tensorflow_cpu.md" = [
+  "docs/Software/Available_Applications/TensorFlow_on_CPUs.md",
+]
+"references/software/tensorflow_gpu.md" = [
+  "docs/Software/Available_Applications/TensorFlow_on_GPUs.md",
+]

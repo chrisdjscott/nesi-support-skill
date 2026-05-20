@@ -16,9 +16,15 @@ A Claude Code / Agent SDK skill that teaches an agent how to use NeSI's Mahuika 
 .
 ├── SKILL.md                     # Eager-loaded entry point (keep small)
 ├── README.md                    # One-liner for humans browsing GitHub
+├── LICENSE                      # GPLv3
 ├── AGENTS.md                    # This file
+├── pyproject.toml               # Packaging metadata
 ├── .gitmodules                  # Pins support-docs submodule
+├── .upstream-reconciled-sha     # SHA the derivatives last matched
+├── scripts/
+│   └── upstream_drift.py        # Drift report generator
 ├── references/
+│   ├── sources.toml             # Canonical derivative-to-upstream mapping
 │   ├── access-and-login.md
 │   ├── containers.md
 │   ├── debugging-efficiency.md
@@ -58,22 +64,11 @@ Keep this layered model intact. Do not collapse references back into `SKILL.md`,
 
 ## Source-of-truth mapping
 
-Each `references/*.md` corresponds to a section of `support-docs/docs/`. When updating, read the upstream page first, then condense.
+`references/sources.toml` is the canonical mapping of each derivative file to the upstream paths it draws from. The drift script (`scripts/upstream_drift.py`) reads it to flag derivatives needing review when the submodule advances.
 
-| Skill file | Upstream area (under `support-docs/docs/`) |
-| --- | --- |
-| `references/access-and-login.md` | `Getting_Started/Accessing_the_HPCs_-_NeSI_Mahuika/` |
-| `references/slurm.md` | `Batch_Computing/Slurm/`, `Batch_Computing/Reference/` |
-| `references/slurm-examples.md` | `Batch_Computing/Recipes/`, job array and GPU pages |
-| `references/hardware.md` | `Batch_Computing/Hardware/`, partition and GPU pages |
-| `references/filesystems.md` | `Storage/File_Systems_and_Quotas/`, `Long_Term_Storage/` |
-| `references/modules.md` | `Software/` top-level Lmod and EasyBuild pages |
-| `references/parallel-computing.md` | `Software/Parallel_Computing/` |
-| `references/containers.md` | `Software/Containers/` (Apptainer) |
-| `references/debugging-efficiency.md` | `Software/Profiling_and_Debugging/` |
-| `references/software/<package>.md` | `Software/Available_Applications/<Package>.md` |
+Per-package files under `references/software/` are auto-matched against `support-docs/docs/Software/Available_Applications/` by lowercasing the stem and stripping underscores (e.g. `gromacs.md` matches `GROMACS.md`). Add an explicit entry in `sources.toml` only when the upstream filename diverges from that convention (e.g. upstream `TensorFlow_on_GPUs.md` for `tensorflow_gpu.md`).
 
-Filenames in `references/software/` are lower-case ASCII (e.g. `gromacs.md`, `cp2k.md`, `tensorflow_gpu.md`). Upstream uses mixed case (e.g. `GROMACS.md`, `TensorFlow_on_GPGPUs.md`). When adding a new package, use the lower-case form and underscores for spaces.
+Filenames in `references/software/` are lower-case ASCII (e.g. `gromacs.md`, `cp2k.md`, `tensorflow_gpu.md`). Upstream uses mixed case. When adding a new package, use the lower-case form and underscores for spaces.
 
 ## Style rules for content
 
@@ -111,22 +106,32 @@ Reference files (`references/**/*.md`) do not need frontmatter.
 4. Add the package to `references/software/index.md` in the correct category table. Categories currently are: chemistry/MD/quantum, bioinformatics/structural/genomics, climate/earth/engineering, ML/AI, programming languages, workflow/utilities. If a new category is needed, add a new table heading and a one-line description.
 5. Cross-reference from `SKILL.md` is not required for individual packages, only the `index.md` is named there.
 
-## Updating an existing reference
+## Reconciling with upstream
 
-1. `git -C support-docs pull` (or `git submodule update --remote support-docs`) to get latest upstream.
-2. Diff the upstream page against the current reference. Most updates will be: version bumps, new partition names, changed quotas, new GPU types.
-3. Preserve the layered structure (Quick orientation in `SKILL.md`, detail in `references/`). Do not move detail upward.
-4. After editing, re-read `SKILL.md` to check the one-line "Load for" hint for that reference is still accurate.
+`.upstream-reconciled-sha` at repo root records the most recent upstream commit the derivatives have been reconciled against. It is bumped by hand at the end of each reconcile pass.
 
-## Updating the submodule pin
+The workflow when upstream changes:
 
-```bash
-git submodule update --remote support-docs
-git add support-docs
-git commit -m "Bump support-docs submodule"
-```
+1. Bump the submodule:
+   ```
+   git submodule update --remote support-docs
+   ```
+2. Generate a drift report:
+   ```
+   uv run scripts/upstream_drift.py > /tmp/drift.md
+   ```
+   The report groups changed upstream files by derivative, with inline diffs in `<details>` blocks. Pass `--no-diff` for just the checklist, or `--since <sha>` to compare against a different SHA.
+3. Walk the report. For each derivative, decide: ignore (no material change), small edit, or rewrite from the upstream page. Preserve the layered structure (orientation in `SKILL.md`, detail in `references/`). Do not move detail upward. Most changes are version bumps, partition renames, quota tweaks, or new GPU types.
+4. Update `references/sources.toml` if new upstream files are now relevant or existing mappings have shifted.
+5. Bump `.upstream-reconciled-sha` to the new submodule HEAD:
+   ```
+   git -C support-docs rev-parse HEAD > .upstream-reconciled-sha
+   ```
+6. Commit the submodule pin, the SHA file, the mapping, and updated derivatives together.
 
-Do not commit changes made **inside** `support-docs/`. That tree is upstream-only.
+After editing any reference, re-read `SKILL.md` to check its one-line "Load for" hint for that file is still accurate.
+
+Never commit changes made **inside** `support-docs/`. That tree is upstream-only.
 
 ## Things that drift and need watching
 
@@ -134,7 +139,7 @@ Do not commit changes made **inside** `support-docs/`. That tree is upstream-onl
 - **Login host**: `mahuika` via the `lander` jump host. Older docs reference `mahuika01`, `mahuika02`, or `ssh nesi`. Newer docs use `ssh mahuika`. Both still work for many users.
 - **Partitions**: `milan` and `genoa` currently. The older `large` and `bigmem` partitions are gone. Do not reintroduce them.
 - **GPU types**: A100 (80 GB and 40 GB), H100, L4. P100 was retired.
-- **Filesystem quotas**: `/home` 20 GB, `/nesi/project` 100 GB soft / 110 GB hard, `/nesi/nobackup` 10 TB soft / 12 TB hard, `nobackup` auto-cleans files untouched for 90 days. Cross-check with `Storage/File_Systems_and_Quotas/` before changing.
+- **Filesystem quotas**: `/home` 20 GB, `/nesi/project` 100 GB soft / 110 GB hard, `/nesi/nobackup` 10 TB soft / 12 TB hard, `nobackup` auto-cleans files untouched for 90 days. Cross-check with `Storage/Filesystems_and_Quotas.md` before changing.
 - **Toolchains**: `foss-2023a`, `intel-2022a`, etc. Newer toolchains appear yearly. Update `references/modules.md` when EasyBuild rolls one out.
 - **Example project code**: always `nesi99991`. Do not use real project codes.
 
@@ -151,6 +156,7 @@ Do not commit changes made **inside** `support-docs/`. That tree is upstream-onl
 - `SKILL.md` is still under ~100 lines.
 - Every file under `references/` is referenced from either `SKILL.md` or `references/software/index.md`.
 - `references/software/index.md` lists every file in `references/software/` (except itself).
+- Every file in `references/software/` is either auto-matched or has an explicit entry in `references/sources.toml`. Verify with `uv run scripts/upstream_drift.py --no-diff` (no warnings on stderr).
 - No em dashes anywhere (`grep -nP "—|–| - " references/ SKILL.md`).
 - No US spellings introduced (`grep -nE "specialize|behavior|optimize|color\b|center\b" references/ SKILL.md` and review).
 - Example project code is `nesi99991`, not a real code.

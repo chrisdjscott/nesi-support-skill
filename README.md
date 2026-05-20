@@ -47,9 +47,10 @@ The `support-docs/` git submodule is the source of truth.
 ```bash
 git submodule update --init --recursive          # first time
 git submodule update --remote support-docs       # pull latest upstream
+uv run scripts/upstream_drift.py > /tmp/drift.md # what needs reconciling
 ```
 
-Then reconcile any drift into `references/` and `SKILL.md`. See `AGENTS.md` for the mapping between upstream pages and skill files.
+`scripts/upstream_drift.py` diffs the submodule from the SHA in `.upstream-reconciled-sha` to current HEAD and groups changed upstream files by derivative. The mapping lives in `references/sources.toml`. See `AGENTS.md` for the full reconcile workflow.
 
 ## Triggering
 
