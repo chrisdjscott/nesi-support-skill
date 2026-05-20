@@ -42,8 +42,8 @@ Working space for compute jobs. Datasets in active use, intermediate outputs, jo
 
 Files matching **all** of these are deleted:
 
-- Created >90 days ago,
-- Not accessed or modified for -��90 days,
+- Created over 90 days ago,
+- Not accessed or modified for 90 days,
 - Listed by `nn_doomed_list` two weeks earlier.
 
 Process:
@@ -52,7 +52,7 @@ Process:
 - Email notification 2 weeks before deletion (76 days).
 - Deletion at 90 days.
 
-Do **not** `touch` files to dodge cleaning, it's a shared resource. Directories and broken symlinks are not auto-deleted, but they still count against the project's inode quota.
+Do **not** `touch` files to dodge cleaning, it's a shared resource. After file deletion, any empty **child** directories are also removed; empty **parent** directories and broken symlinks are left in place but still count against the project's inode quota.
 
 ### Checking what's scheduled for deletion
 
@@ -102,6 +102,21 @@ find /nesi/nobackup/nesi99991 -type f -atime +82 -ctime +82 -delete
 ## Freezer
 
 Tape-backed S3 storage for cold data (datasets used quarterly or less). Files dwell on disk for hours/days, then move to tape; a catalogue stays on disk for browsing. Accessed via `s3cmd`. Apply for an allocation via `my.nesi.org.nz` or `support@nesi.org.nz`. Designed for relatively large files, not many small files.
+
+## `/opt/nesi/models` (shared LLM cache)
+
+Read-only cache of popular open-weight LLMs in GGUF format. Use this instead of downloading the same model into your `/home` or `/nesi/project` quota. Available families: Llama 3.1, DeepSeek-R1, Qwen3, Qwen2.5, Gemma 3. Confirm exact paths with `ls /opt/nesi/models/gguf/`.
+
+Indicative size-to-GPU mapping:
+
+| Size class | Example | Minimum GPU flags |
+| --- | --- | --- |
+| 7-8B (quantised) | `/opt/nesi/models/gguf/llama3.1/llama3.1-8b.gguf` | `--gpus-per-node=l4:1` |
+| 14B (quantised) | `/opt/nesi/models/gguf/qwen3/qwen3-14b.gguf` | `--gpus-per-node=l4:1` |
+| 27-32B (quantised) | `/opt/nesi/models/gguf/gemma3/gemma3-27b.gguf` | `--partition=genoa --gpus-per-node=a100:1` |
+| 70B (quantised) | `/opt/nesi/models/gguf/llama3.1/llama3.1-70b.gguf` | `--partition=milan --gpus-per-node=a100:1` |
+
+L4 GPUs have no FP64; fine for quantised inference but unsuitable for training or any FP64-dependent workflow. Request additions to the cache via `support@nesi.org.nz`. Most natural to consume via `references/software/ollama.md`.
 
 ## Snapshots and recovery
 
