@@ -26,7 +26,7 @@ Drop `SKILL.md` and `references/` into the skills directory your agent reads fro
 Pick one and copy:
 
 ```bash
-git clone https://github.com/<org>/nesi-support-skill.git
+git clone https://github.com/chrisdjscott/nesi-support-skill.git
 mkdir -p ~/.claude/skills/nesi-hpc
 cp -r nesi-support-skill/SKILL.md nesi-support-skill/references ~/.claude/skills/nesi-hpc/
 ```

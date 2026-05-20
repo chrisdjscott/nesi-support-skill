@@ -21,6 +21,11 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 
+[project.urls]
+Homepage = "https://github.com/chrisdjscott/nesi-support-skill"
+Repository = "https://github.com/chrisdjscott/nesi-support-skill"
+Issues = "https://github.com/chrisdjscott/nesi-support-skill/issues"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/nesi_hpc_skill"]
 
