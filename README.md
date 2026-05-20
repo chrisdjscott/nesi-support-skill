@@ -55,6 +55,15 @@ Then reconcile any drift into `references/` and `SKILL.md`. See `AGENTS.md` for 
 
 The skill activates when a user asks an agent about Mahuika, NeSI, Slurm jobs, modules, GPUs on the cluster, or any of the 55 indexed scientific packages. See the `description:` field in `SKILL.md` for the exact match surface.
 
-## License
+## Disclaimer
 
-Content is derived from [nesi/support-docs](https://github.com/nesi/support-docs); refer to that repository for upstream licensing.
+This skill is an independent project and is not officially affiliated with, endorsed by, or maintained by NeSI or REANNZ. For authoritative documentation, see <https://docs.nesi.org.nz/>. For account or support issues, contact `support@nesi.org.nz`.
+
+## Licence
+
+GPLv3. See [LICENSE](LICENSE).
+
+This work is a condensed, modified derivative of [nesi/support-docs](https://github.com/nesi/support-docs), first packaged 2026.
+
+- Upstream content copyright © REANNZ / NeSI, distributed under GPLv3.
+- Modifications copyright © 2026 The University of Auckland.

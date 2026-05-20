@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nesi-hpc-skill"
+version = "0.1.0"
+description = "Claude Code / Agent SDK skill for NeSI's Mahuika HPC cluster (operated by REANNZ)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Chris Scott", email = "csco212@aucklanduni.ac.nz" },
+]
+keywords = ["claude-code", "agent-skill", "nesi", "reannz", "mahuika", "hpc", "slurm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nesi_hpc_skill"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"SKILL.md" = "nesi_hpc_skill/SKILL.md"
+"references" = "nesi_hpc_skill/references"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "SKILL.md",
+    "references/",
+    "README.md",
+    "AGENTS.md",
+    "LICENSE",
+    "pyproject.toml",
+]
+exclude = [
+    "support-docs/",
+    ".gitmodules",
+]
