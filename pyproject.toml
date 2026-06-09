@@ -26,6 +26,11 @@ Homepage = "https://github.com/chrisdjscott/nesi-support-skill"
 Repository = "https://github.com/chrisdjscott/nesi-support-skill"
 Issues = "https://github.com/chrisdjscott/nesi-support-skill/issues"
 
+# Discovered by a host agent via the `vdsai.skills.nesi` entry-point group;
+# the factory returns this package's directory for a `SkillsCapability`.
+[project.entry-points."vdsai.skills.nesi"]
+nesi-hpc = "nesi_hpc_skill:skill_dir"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/nesi_hpc_skill"]
 
