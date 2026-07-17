@@ -63,6 +63,10 @@ module purge
 module load ollama
 unset CUDA_VISIBLE_DEVICES
 
+# Bind the server to a random free port to avoid clashes on shared nodes
+PORT=$(python3 -c "import socket; s=socket.socket(); s.bind(('', 0)); print(s.getsockname()[1]); s.close()")
+export OLLAMA_HOST=${HOSTNAME}:${PORT}
+
 ollama serve &>/dev/null &
 until ollama list &>/dev/null; do sleep 1; done
 

@@ -4,10 +4,17 @@ Hydrodynamics, morphodynamics, particle, water-quality and wave modelling suite 
 
 ## Loading
 
+Two modules exist:
+
+- `Delft3D_FM`: solvers for both structured and unstructured (flexible) meshes. Use this for new work.
+- `Delft3D`: structured-mesh solvers only, kept for backwards compatibility.
+
 ```bash
-module spider Delft3D
-module load Delft3D/<version>
+module spider Delft3D_FM
+module load Delft3D_FM/<version>
 ```
+
+The examples below use `d_hydro`, common to both modules.
 
 ## Serial
 

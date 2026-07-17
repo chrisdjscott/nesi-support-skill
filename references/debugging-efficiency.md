@@ -27,6 +27,8 @@ Reading this:
 - **CPU efficiency**: average utilisation across cores. Low means you over-requested CPUs *or* the program isn't parallel for that workload.
 - **Mem efficiency**: peak RSS vs `--mem`. Aim for 60-80 %. Below 30 % means you're wasting headroom; above 95 % is risky.
 
+For GPU jobs, `seff` also reports `GPU Utilisation` and `GPU Memory`. Low GPU utilisation means the GPU is idling (usually CPU/IO-bound preprocessing, or the workload doesn't really use the GPU). See `hardware.md` for choosing a smaller/cheaper GPU.
+
 ### `sacct` columns
 
 ```bash
@@ -53,17 +55,15 @@ Caveats:
 
 ## Live: watching a running job
 
-`squeue --me` shows running jobs and their nodes. Drill in with htop on the compute node:
+`squeue --me` shows running jobs and their nodes. Hop onto the node your job runs on with `svisit <jobid>`:
 
 ```bash
-# Get node name
-squeue -h -o '%N' -j 1234567
-
-# SSH to it and run htop scoped to your processes
-ssh -t wbn175 htop -u $USER
+svisit 1234567       # drops you on the compute node
+htop -u $USER        # CPU/memory, scoped to your processes
+nvtop                # GPU utilisation and VRAM, for GPU jobs
 ```
 
-(If first connect: type `yes` to accept the host key, `y` alone doesn't work.)
+`svisit` is the NeSI helper for this; if you connect over raw SSH instead (`ssh -t <node> htop -u $USER`), accept the host key by typing `yes` in full on first connect.
 
 In htop:
 
@@ -71,7 +71,7 @@ In htop:
 - **S**: state. `R` running, `S`/`D` sleeping (D usually blocked on I/O).
 - **CPU%**: percentage of one core. Sum across threads to estimate utilisation.
 
-If the job ends while you're connected, htop drops; type `reset` to clear the garbled terminal.
+`nvtop` gives the same live view for the GPU: per-device utilisation and memory over time. If the job ends while you're connected, the tools drop; type `reset` to clear the garbled terminal.
 
 ## OOM (Out-Of-Memory) kills
 

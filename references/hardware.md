@@ -2,7 +2,7 @@
 
 ## Compute nodes
 
-Jobs land on a node matching the requested CPU:memory ratio. Asking for -��2 GB/core puts you on a 2 GB/core node (or 4 GB/core if those are full), and so on. You always get the memory you requested.
+Jobs land on a node matching the requested CPU:memory ratio. Asking for 2 GB/core puts you on a 2 GB/core node (or 4 GB/core if those are full), and so on. You always get the memory you requested.
 
 ### Milan partition (`--partition=milan`)
 
@@ -38,7 +38,7 @@ Request with `--gpus-per-node=<type>:<count>`.
 | A100 (PCIe, 40 GB) | 40 GB | 2 | `genoa` | `--partition=genoa` + `--gpus-per-node=A100:1` |
 | H100 | 96 GB | 2 | `genoa` | `--gpus-per-node=H100:1` |
 | L4 | 24 GB | 4 | `genoa` | `--gpus-per-node=L4:1`, no fp64 |
-| A40 | 48 GB |, | RDC (cloud) | Not via Slurm, teaching/training only |
+| A40 | 48 GB | n/a | RDC (cloud) | Not via Slurm, teaching/training only |
 
 L4 has no fp64, so anything depending on double-precision floats (some molecular dynamics, some fluid solvers) needs A100 or H100.
 

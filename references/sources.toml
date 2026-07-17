@@ -55,9 +55,3 @@
 "references/software/index.md" = [
   "docs/Software/Available_Applications/",
 ]
-"references/software/tensorflow_cpu.md" = [
-  "docs/Software/Available_Applications/TensorFlow_on_CPUs.md",
-]
-"references/software/tensorflow_gpu.md" = [
-  "docs/Software/Available_Applications/TensorFlow_on_GPUs.md",
-]

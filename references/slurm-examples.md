@@ -118,7 +118,21 @@ GPU type - partition:
 
 `$CUDA_VISIBLE_DEVICES` is auto-set by Slurm, never hard-code GPU indices in your code.
 
-Application-specific GPU pages: ABAQUS, GROMACS, Lambda_Stack, MATLAB, TensorFlow_on_GPUs. See `references/software/<package>.md`.
+### Choosing the right GPU
+
+Before committing to a GPU type for production, run a short test job on each candidate and compare `seff` output (GPU utilisation, VRAM, walltime) against the compute-unit cost. Use the `debug` QoS so the test starts quickly, and profile at high frequency:
+
+```sl
+#SBATCH --time         00:15:00
+#SBATCH --gpus-per-node <type>:1
+#SBATCH --qos          debug
+#SBATCH --profile      task      # testing only
+#SBATCH --acctg-freq   1         # testing only
+```
+
+`--qos=debug` allows one short job at a time. See `references/debugging-efficiency.md` for reading the results.
+
+Application-specific GPU pages: ABAQUS, GROMACS, Lambda_Stack, MATLAB, TensorFlow. See `references/software/<package>.md`.
 
 ## Interactive sessions
 

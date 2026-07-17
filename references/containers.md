@@ -146,6 +146,14 @@ module load Apptainer
 apptainer exec --nv my-gpu.sif python3 train.py
 ```
 
+To compile GPU code inside a container, start a `--nv` shell so GPU compilers (`nvc++` etc.) see the hardware, build, then run the binary via a GPU Slurm job:
+
+```bash
+apptainer shell --nv my-gpu.sif
+Apptainer> CXX=nvc++ cmake -DOPENACC=1 .. && make && exit
+srun --gpus-per-node=1 apptainer exec --nv my-gpu.sif ./my_application
+```
+
 ## NVIDIA NGC containers
 
 NVIDIA distributes optimised containers (PyTorch, TensorFlow, NAMD, GROMACS, ...) at <https://catalog.ngc.nvidia.com/containers>. Most run under Apptainer with minor adjustments.
@@ -182,7 +190,25 @@ The `-B $(pwd):/host_pwd --pwd /host_pwd` binds the current host directory into 
 
 ## MPI containers
 
-Containerised MPI apps need the *container's* MPI to be ABI-compatible with the host MPI when launched via `srun`. In practice that often means matching OpenMPI major versions. If you can, build the container against the same OpenMPI version you'll run on (foss-2023a uses OpenMPI 4.1.x).
+Containerised MPI apps need the container's MPI to be compatible with the host MPI. The recommended approach is to bind the host MPI installation into the container and launch with the host's `mpiexec`, so ranks are placed correctly. Intel MPI example:
+
+```sl
+#!/bin/bash -e
+#SBATCH --account   nesi99991
+#SBATCH --job-name  mpi-container
+#SBATCH --time      00:30:00
+#SBATCH --ntasks    8
+#SBATCH --nodes     2
+
+module purge
+module load impi
+
+mpiexec -n ${SLURM_NTASKS} --bind-to none --map-by slot \
+    apptainer exec --bind $I_MPI_ROOT:$I_MPI_ROOT my_mpi_app.sif \
+    /path/to/my_application
+```
+
+`$I_MPI_ROOT` is the host Intel MPI path; binding it in exposes the host libraries inside the container. For OpenMPI, match the container's OpenMPI major version to the host (foss-2023a uses OpenMPI 4.1.x). If versions can't be matched, run inside the container's own MPI without `srun`, at the cost of Slurm rank tracking.
 
 ## Network and ports
 

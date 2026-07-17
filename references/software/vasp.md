@@ -26,7 +26,7 @@ VASP 6 parallelises Kohn-Sham orbital work across both MPI ranks (`--ntasks`) an
 #SBATCH --time             01:00:00
 #SBATCH --ntasks           8
 #SBATCH --cpus-per-task    4
-#SBATCH --mem-per-cpu      950
+#SBATCH --mem-per-cpu      1G
 #SBATCH --extra-node-info  1:*:1          # at least 1 free socket; disable SMT
 #SBATCH --distribution     *:block:*       # fill sockets in order
 #SBATCH --mem-bind         local
@@ -79,9 +79,16 @@ For multi-**k** calculations, experiment with `KPAR` (must divide `--ntasks`).
 
 Multi-threading mostly benefits hybrid functionals and high-precision electronic structure work.
 
+### Benchmarking tools
+
+NeSI-maintained helpers automate the sweeps:
+
+- `vasp-parameter-benchmarking`: converge `INCAR`/`KPOINTS` parameters (`ENCUT`, `LREAL`, etc.). <https://github.com/geoffreyweal/vasp-parameter-benchmarking>
+- `vasp-core-benchmarking`: sweep `ntasks`/`cpus-per-task` to minimise electronic-step time. <https://github.com/geoffreyweal/vasp-core-benchmarking>
+
 ## Visualisation
 
-Load a Python module and use `ase-gui POSCAR` (from Atomic Simulation Environment) to inspect/modify structures. See `https://wiki.fysik.dtu.dk/ase/`.
+Load a Python module and use `ase-gui POSCAR` (from Atomic Simulation Environment) to inspect/modify structures. See <https://docs.ase-lib.org/>.
 
 ## Upstream
 

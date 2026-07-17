@@ -44,11 +44,9 @@ Always check installed versions with `module spider <name>` on Mahuika, these pa
 
 | Package | File | Use |
 | --- | --- | --- |
-| Keras | `keras.md` | high-level neural nets |
 | Lambda_Stack | `lambda_stack.md` | DL toolchain bundle |
 | ollama | `ollama.md` | local LLM serving |
-| TensorFlow on CPUs | `tensorflow_cpu.md` | TF, no GPU |
-| TensorFlow on GPUs | `tensorflow_gpu.md` | TF with CUDA |
+| TensorFlow | `tensorflow.md` | TF/Keras on CPU or GPU |
 
 ## CFD, FEA, engineering simulation
 
@@ -62,6 +60,7 @@ Always check installed versions with `module spider <name>` on Mahuika, these pa
 | OpenFOAM | `openfoam.md` | CFD |
 | OpenSees | `opensees.md` | structural earthquake engineering |
 | ParaView | `paraview.md` | visualisation |
+| TUFLOW | `tuflow.md` | flood/hydraulics modelling (licence-restricted) |
 
 ## Climate, weather, geophysics
 
