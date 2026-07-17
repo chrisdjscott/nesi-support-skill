@@ -64,7 +64,7 @@ Load the matching reference file when the user's question lands in that area.
 
 ### Access and connectivity
 
-- **`references/access-and-login.md`**: SSH config with `lander` jump host, IAM/MFA login flow, optional `mahuika_key` SSH key, trusted devices, VSCode Remote-SSH, MobaXterm/WSL/Git Bash on Windows, X11 forwarding. **Load for**: first-time login, SSH troubleshooting, "Account is not ready", connection drops.
+- **`references/access-and-login.md`**: SSH config with `lander` jump host, IAM/MFA login flow, optional `mahuika_key` SSH key, trusted devices, VSCode Remote-SSH, MobaXterm/WSL/Git Bash on Windows, X11 forwarding, port forwarding, outbound internet access from login and compute nodes (direct, no proxy). **Load for**: first-time login, SSH troubleshooting, "Account is not ready", connection drops, whether jobs can reach the internet or need a proxy, licence-server IP allowlisting.
 
 ## Conventions used in this skill
 

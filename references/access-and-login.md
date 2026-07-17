@@ -143,6 +143,16 @@ ssh -L 8888:wbn175:8888 mahuika
 
 This forwards local port 8888 to port 8888 on `wbn175`. The connection goes through `lander` automatically because of the ProxyCommand.
 
+<!-- LOCAL-NOTE start: outbound-internet | agent-authored clarification, preserve across reconciles (see AGENTS.md "Local notes and corrections") -->
+## Outbound internet access
+
+Login nodes and compute nodes both have direct outbound internet access. There is no HTTP proxy, and none is required. Jobs can `pip install`, `wget`/`curl`, `git clone`, pull container images, and reach external licence servers directly, from both login and compute nodes.
+
+Do not set `http_proxy`/`https_proxy` on Mahuika; they are unnecessary and setting them can break connectivity.
+
+Outbound connections originate from the address range `163.7.147.128/26` (`163.7.147.128` to `163.7.147.191`). Give this range to any external service that requires IP allowlisting, such as an institutional licence server.
+<!-- LOCAL-NOTE end -->
+
 ## Common problems
 
 ### "Account is not ready"

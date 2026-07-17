@@ -121,7 +121,7 @@ The workflow when upstream changes:
    uv run scripts/upstream_drift.py > /tmp/drift.md
    ```
    The report groups changed upstream files by derivative, with inline diffs in `<details>` blocks. Pass `--no-diff` for just the checklist, or `--since <sha>` to compare against a different SHA.
-3. Walk the report. For each derivative, decide: ignore (no material change), small edit, or rewrite from the upstream page. Preserve the layered structure (orientation in `SKILL.md`, detail in `references/`). Do not move detail upward. Most changes are version bumps, partition renames, quota tweaks, or new GPU types.
+3. Walk the report. For each derivative, decide: ignore (no material change), small edit, or rewrite from the upstream page. Preserve the layered structure (orientation in `SKILL.md`, detail in `references/`). Do not move detail upward. Most changes are version bumps, partition renames, quota tweaks, or new GPU types. **When rewriting a file, preserve any `LOCAL-NOTE` blocks** (see "Local notes and corrections"); re-insert them if a full rewrite would drop them.
 4. Update `references/sources.toml` if new upstream files are now relevant or existing mappings have shifted.
 5. Bump `.upstream-reconciled-sha` to the new submodule HEAD:
    ```
@@ -132,6 +132,29 @@ The workflow when upstream changes:
 After editing any reference, re-read `SKILL.md` to check its one-line "Load for" hint for that file is still accurate.
 
 Never commit changes made **inside** `support-docs/`. That tree is upstream-only.
+
+## Local notes and corrections
+
+Sometimes the skill needs a fact that upstream states obliquely, scatters across pages, or omits entirely, often to pre-empt a known wrong assumption (for example, agents wrongly believing compute nodes need an HTTP proxy for internet access). Mark such deliberately-authored content so a later reconcile pass does not silently drop it when rewriting the file from upstream.
+
+Wrap the block in HTML-comment markers:
+
+```markdown
+<!-- LOCAL-NOTE start: <short-slug> | agent-authored clarification, preserve across reconciles (see AGENTS.md "Local notes and corrections") -->
+... content ...
+<!-- LOCAL-NOTE end -->
+```
+
+Rules:
+
+- **Preserve** `LOCAL-NOTE` blocks across reconciles. If you rewrite the surrounding file from an upstream page, carry the block over.
+- **Ground it in upstream where possible.** If an upstream page supports the fact, add that page to the derivative's `references/sources.toml` mapping (with a comment naming the note), so the drift script flags the block for review when the source changes. The outbound-internet note in `access-and-login.md` is mapped this way to `Getting_Started/FAQs/Mahuika_HPC3_Differences.md`.
+- **Update, do not blindly keep.** A `LOCAL-NOTE` is preserved, not frozen. If upstream later contradicts it, correct the note (and, if the note is now redundant with the main text, remove it).
+- Keep blocks small and self-contained. One fact per block. Follow all the style rules above (no em dashes, British English, terse).
+
+Current `LOCAL-NOTE` blocks:
+
+- `references/access-and-login.md` (`outbound-internet`): login and compute nodes have direct outbound internet, no proxy required; outbound IP range for licence-server allowlisting.
 
 ## Things that drift and need watching
 
