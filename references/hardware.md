@@ -2,49 +2,59 @@
 
 ## Compute nodes
 
-Jobs land on a node matching the requested CPU:memory ratio. Asking for 2 GB/core puts you on a 2 GB/core node (or 4 GB/core if those are full), and so on. You always get the memory you requested.
+Jobs land on a node matching the requested CPU:memory ratio. Asking for 2 GB/core puts you on a 2 GB/core node (or a higher-ratio node if those are full). You always get the memory you requested. Installed memory is a few percent above what Slurm schedules (a 512 GB node offers ~480 GB), so a job requesting exactly the nominal ratio across every core will not fit. `sinfo -o '%n %m'` shows exact schedulable figures.
 
 ### Milan partition (`--partition=milan`)
 
-2× AMD EPYC 7713 (Milan) per node, 8 chiplets × 8 cores = 128 physical cores per node, 126 schedulable.
+2× AMD EPYC 7713 (Milan) per node, 8 chiplets × 8 cores = 128 cores, or 1× EPYC 7713P with 64 cores on GPU nodes.
 
 | Memory | Per-core | GPU | Nodes |
 | --- | --- | --- | --- |
-| 512 GB | 4 GB | none | 54 |
+| 512 GB | 4 GB | none | 55 |
 | 1024 GB | 8 GB | none | 8 |
-| 1024 GB | 8 GB | 4× NVIDIA HGX A100 80 GB | 4 |
+| 512 GB | 8 GB | 4× NVIDIA HGX A100 80 GB | 4 |
 
 ### Genoa partition (`--partition=genoa`)
 
-2× AMD EPYC 9634 (Genoa) per node, 12 chiplets × 7 cores = 168 physical cores per node, 166 schedulable.
+2× AMD EPYC 9634 (Genoa) per node, 12 chiplets × 7 cores = 168 cores.
 
 | Memory | Per-core | GPU | Nodes |
 | --- | --- | --- | --- |
-| 358 GB | 1 GB | none | 44 |
-| 716 GB | 2 GB | 2× NVIDIA A100 40 GB | 4 |
-| 1432 GB | 4 GB | none | 8 |
-| 1432 GB | 4 GB | 2× NVIDIA H100 96 GB | 4 |
-| 1432 GB | 4 GB | 4× NVIDIA L4 24 GB | 4 |
+| 384 GB | 2 GB | none | 44 |
+| 768 GB | 4 GB | 2× NVIDIA RTX PRO 6000 96 GB | 4 |
+| 1536 GB | 8 GB | none | 8 |
+| 1536 GB | 8 GB | 2× NVIDIA H100 NVL 94 GB | 4 |
+| 1536 GB | 8 GB | 4× NVIDIA L4 24 GB | 4 |
 
-Specifying `--partition` is often unnecessary; the scheduler picks based on what you request. Pin it only when you need a specific architecture or GPU.
+### Hugemem partition (`--partition=hugemem`)
+
+Intel Xeon Gold (Cascade Lake) nodes for very large shared-memory jobs. Jobs never land here automatically, you must request the partition explicitly. The architecture differs from milan/genoa, expect to recompile.
+
+| CPUs | Cores | Memory | Nodes |
+| --- | --- | --- | --- |
+| 2× Xeon Gold 6230 | 40 | 1.5 TB | 2 |
+| 4× Xeon Gold 6238M | 88 | 6 TB | 1 |
+
+Specifying `--partition` is often unnecessary; the scheduler picks based on what you request. Pin it only when you need a specific architecture, a GPU type, or hugemem.
 
 ## GPUs
 
-Request with `--gpus-per-node=<type>:<count>`.
+Request with `--gpus-per-node=<type>:<count>`. Type strings are lower-case: `a100`, `pro_6000`, `h100`, `l4`.
 
-| Type | VRAM | Per node | Partition | Slurm header |
+| Type | VRAM | Per node | Partition | Notes |
 | --- | --- | --- | --- | --- |
-| A100 (HGX, 80 GB) | 80 GB | 4 | `milan` | `--partition=milan` + `--gpus-per-node=A100:1` |
-| A100 (PCIe, 40 GB) | 40 GB | 2 | `genoa` | `--partition=genoa` + `--gpus-per-node=A100:1` |
-| H100 | 96 GB | 2 | `genoa` | `--gpus-per-node=H100:1` |
-| L4 | 24 GB | 4 | `genoa` | `--gpus-per-node=L4:1`, no fp64 |
-| A40 | 48 GB | n/a | RDC (cloud) | Not via Slurm, teaching/training only |
+| A100 SXM4 | 80 GB | 4 | `milan` | Only 4-GPU-per-node option. |
+| RTX PRO 6000 (Blackwell) | 96 GB | 2 | `genoa` | Slow fp64. No TF32 tensor speedup, gains come from BF16/FP8/FP4. |
+| H100 NVL | 94 GB | 2 | `genoa` | 600 GB/s NVLink between the pair. Best fp64. |
+| L4 | 24 GB | 4 | `genoa` | Slow fp64, 24 GB limit. Best perf/watt for inference and teaching. |
 
-L4 has no fp64, so anything depending on double-precision floats (some molecular dynamics, some fluid solvers) needs A100 or H100.
+L4 and RTX PRO 6000 are poor at double precision (fp64); anything depending on it (some molecular dynamics, some solvers) needs A100 or H100 NVL. Rough workload fit: fp64 HPC prefers H100 NVL then A100; molecular dynamics prefers RTX PRO 6000, then H100 NVL, then A100; 2-GPU communication-bound work prefers H100 NVL (NVLink); 4-GPU tightly-coupled work only fits A100 on milan; single-GPU fine-tuning and large-model inference prefer RTX PRO 6000 or H100 NVL.
 
 If you omit the GPU type (`--gpus-per-node=1`), you may land on any available GPU including unsuitable ones.
 
 `CUDA_VISIBLE_DEVICES` is set automatically, it lists the *indices* of allocated GPUs, not a count.
+
+GPUDirect RDMA is not enabled and GPU nodes are split across two InfiniBand switches, so keep GPU jobs within a single node.
 
 ## Limits
 

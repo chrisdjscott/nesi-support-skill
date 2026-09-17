@@ -222,10 +222,9 @@ The values above target small proteins (~100 residues, e.g. 3RGK). Scale `--mem`
 | Multimer (total ~1000 aa) | 30 GB | A100:1 | 2-4 h |
 | Large multimer | 60 GB+ | A100:1 (80 GB) | 6-12 h |
 
-If you exceed L4 / 40 GB A100 VRAM, request `milan` partition for the 80 GB A100:
+If you exceed L4 / 24 GB VRAM, request the 80 GB A100 (milan only):
 
 ```sl
-#SBATCH --partition     milan
 #SBATCH --gpus-per-node A100:1
 ```
 

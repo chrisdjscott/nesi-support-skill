@@ -22,15 +22,16 @@
   "docs/Batch_Computing/Batch_Computing_Guide.md",
   "docs/Batch_Computing/SLURM-Best_Practice.md",
   "docs/Batch_Computing/Job_Limits.md",
-  "docs/Batch_Computing/Job_prioritisation.md",
+  "docs/Batch_Computing/Job_Prioritisation.md",
   "docs/Batch_Computing/Fair_Share.md",
-  "docs/Batch_Computing/Checking_resource_usage.md",
+  "docs/Batch_Computing/Checking_Resource_Usage.md",
+  "docs/Batch_Computing/scron.md",
   "docs/Getting_Started/Cheat_Sheets/Slurm-Reference_Sheet.md",
 ]
 "references/slurm-examples.md" = [
   "docs/Batch_Computing/Job_Arrays.md",
   "docs/Batch_Computing/Job_Checkpointing.md",
-  "docs/Batch_Computing/Temporary_directories.md",
+  "docs/Batch_Computing/Temporary_Directories.md",
   "docs/Batch_Computing/Using_GPUs.md",
 ]
 "references/hardware.md" = [
@@ -52,7 +53,7 @@
 ]
 "references/debugging-efficiency.md" = [
   "docs/Software/Profiling_and_Debugging/",
-  "docs/Getting_Started/Job_efficiency_review.md",
+  "docs/Getting_Started/Job_Efficiency_Review.md",
 ]
 "references/software/index.md" = [
   "docs/Software/Available_Applications/",

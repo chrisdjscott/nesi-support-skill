@@ -48,7 +48,7 @@ Use `#!/bin/bash -e` so the job stops on the first failure (otherwise `sacct` ma
 | `--time` | `--time=00-01:00:00` | Wall time. Shorter jobs queue faster (backfill). |
 | `--mem` | `--mem=4G` | Memory per node. Prefer this over `--mem-per-cpu` unless MPI with random placement. |
 | `--mem-per-cpu` | `--mem-per-cpu=2G` | Use only for MPI with random task placement. SMT doubles per-CPU memory (see `parallel-computing.md`). |
-| `--partition` | `--partition=milan` | `milan` (AMD 7713, 128 cores, A100 80GB) or `genoa` (AMD 9634, 168 cores, A100 40GB/H100/L4). Often unnecessary, scheduler picks. |
+| `--partition` | `--partition=milan` | `milan` (AMD 7713, 128 cores, A100), `genoa` (AMD 9634, 168 cores, RTX PRO 6000/H100/L4), or `hugemem` (Intel, huge memory, must be explicit). Often unnecessary, scheduler picks. |
 | `--output` | `--output=log/%x.%j.out` | Log path. Tokens: `%j` jobid, `%x` jobname, `%a` array index. |
 | `--error` | `--error=log/%x.%j.err` | Separate stderr; defaults to merging with `--output`. |
 | `--mail-user` / `--mail-type` | `--mail-type=END,FAIL` | Notifications. `TIME_LIMIT_80` warns at 80 % walltime. |
@@ -65,7 +65,7 @@ Use `#!/bin/bash -e` so the job stops on the first failure (otherwise `sacct` ma
 | `--ntasks-per-node` | `--ntasks-per-node=4` | Pin MPI tasks per node. |
 | `--cpus-per-task` | `--cpus-per-task=8` | Threads per task (OpenMP, multiprocessing). |
 | `--threads-per-core` | `--threads-per-core=2` | Enable SMT (free second logical CPU per core). `--hint=multithread` is equivalent. |
-| `--gpus-per-node` | `--gpus-per-node=A100:1` | GPU request. Types: `A100`, `H100`, `L4`. |
+| `--gpus-per-node` | `--gpus-per-node=a100:1` | GPU request. Types (lower-case): `a100`, `pro_6000`, `h100`, `l4`. |
 | `--gres=ssd` | | 1.5 TB NVMe scratch in `$JOB_SCRATCH_DIR`/`$TMPDIR`. One such job per node. |
 | `--array` | `--array=1-100%10` | Array job, max 10 concurrent. See `slurm-examples.md`. |
 | `--profile` | `--profile=task` | Generate `.h5` for `profile_plot`. Add `--acctg-freq=30`. |
@@ -130,6 +130,19 @@ Per user:
 - 1000 queued jobs maximum
 
 Per array: max 1000 tasks.
+
+## Recurring jobs: scron
+
+`scron` is Slurm's cron. Edit entries with `scrontab -e` (uses `$EDITOR`, nano by default), list with `scrontab -l`. Entries use standard cron syntax with Slurm options on preceding `#SCRON` lines:
+
+```scrontab
+#SCRON --account=nesi99991
+#SCRON --time=00:10:00
+#SCRON --mem=1G
+0 5 * * * /nesi/project/nesi99991/scripts/daily_task.sh
+```
+
+Runs on the Slurm controller's clock. Not all `sbatch` options are supported; see `man scrontab`.
 
 ## Best practice
 

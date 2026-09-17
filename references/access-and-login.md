@@ -67,19 +67,17 @@ First time prompts:
 
 ## Optional SSH key (recommended)
 
-Eliminates one of the two auth prompts. Run **on Mahuika** (after first successful login):
+Eliminates one of the two auth prompts. Run **on your laptop** (after first successful login):
 
 ```bash
-mkdir -p ~/.ssh
-[ -f .ssh/id_rsa ] || ssh-keygen -t rsa -q -N ""
-cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+[ -f .ssh/mahuika_key ] || ssh-keygen -t rsa -q -N "" -f .ssh/mahuika_key
+scp ~/.ssh/mahuika_key.pub mahuika:~/.ssh/mahuika_key.pub
 ```
 
-Then **on your laptop**:
+Then **on Mahuika** (through SSH or OnDemand):
 
 ```bash
-scp mahuika:~/.ssh/id_rsa ~/.ssh/mahuika_key
-chmod 600 ~/.ssh/mahuika_key
+cat ~/.ssh/mahuika_key.pub >> ~/.ssh/authorized_keys
 ```
 
 Uncomment the `IdentityFile ~/.ssh/mahuika_key` line in `~/.ssh/config`.

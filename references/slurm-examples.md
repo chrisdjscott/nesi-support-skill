@@ -94,8 +94,7 @@ Request a specific GPU type explicitly. Without a type, Slurm may assign any GPU
 #SBATCH --account       nesi99991
 #SBATCH --job-name      gpujob
 #SBATCH --time          01:00:00
-#SBATCH --partition     genoa
-#SBATCH --gpus-per-node A100:1     # or H100:1, L4:1, a100:2, etc.
+#SBATCH --gpus-per-node a100:1     # or pro_6000:1, h100:1, l4:1, a100:2, etc.
 #SBATCH --cpus-per-task 4
 #SBATCH --mem           16G
 
@@ -107,14 +106,16 @@ echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 <gpu workload>
 ```
 
-GPU type - partition:
+GPU types (request lower-case; the scheduler routes to the right partition):
 
 | Request | Partition | Notes |
 | --- | --- | --- |
-| `A100:1` (80 GB) | `milan` | HGX A100, 4 per node |
-| `A100:1` (40 GB) | `genoa` | PCIe A100, 2 per node |
-| `H100:1` | `genoa` | 96 GB, 2 per node |
-| `L4:1` | `genoa` | 24 GB, no fp64, 4 per node |
+| `a100:1` | `milan` | A100 SXM4 80 GB, 4 per node, only 4-GPU option |
+| `pro_6000:1` | `genoa` | RTX PRO 6000 96 GB, 2 per node, slow fp64 |
+| `h100:1` | `genoa` | H100 NVL 94 GB, 2 per node, NVLink pair |
+| `l4:1` | `genoa` | L4 24 GB, 4 per node, slow fp64 |
+
+L4 and RTX PRO 6000 lack usable fp64; see `references/hardware.md` for choosing a GPU type.
 
 `$CUDA_VISIBLE_DEVICES` is auto-set by Slurm, never hard-code GPU indices in your code.
 
@@ -152,8 +153,8 @@ Prompt changes to e.g. `[c004 ~ ]$` once allocated. Omit `--pty` and you'll get 
 ### GPU interactive
 
 ```bash
-srun --account nesi99991 --partition genoa \
-     --gpus-per-node L4:1 --cpus-per-task 8 --mem 4G --time 00:30:00 \
+srun --account nesi99991 \
+     --gpus-per-node l4:1 --cpus-per-task 8 --mem 4G --time 00:30:00 \
      --pty bash
 ```
 

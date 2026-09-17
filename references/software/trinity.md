@@ -52,7 +52,7 @@ Create `SLURM.conf` in the submission directory:
 [GRID]
 gridtype=SLURM
 
-cmd=sbatch --partition=large,bigmem --mem=5G --ntasks=1 --cpus-per-task=1 --time=01:00:00 --account=nesi99991
+cmd=sbatch --partition=hugemem --mem=5G --ntasks=1 --cpus-per-task=1 --time=01:00:00 --account=nesi99991
 
 max_nodes=10
 cmds_per_node=50
@@ -73,7 +73,7 @@ Master batch script:
 #SBATCH --ntasks        1
 #SBATCH --cpus-per-task 1
 #SBATCH --mem           20G
-#SBATCH --partition     bigmem
+#SBATCH --partition     hugemem
 #SBATCH --hint          nomultithread
 
 module purge
@@ -91,7 +91,7 @@ srun Trinity --CPU ${SLURM_CPUS_PER_TASK} --max_memory 20G \
 
 Grid mode is significantly faster and cheaper than the default single-node Phase 2. For an 8-million-read test, default 16-core Phase 2 ran 24 h and used 387 core-hours; grid mode with `max_nodes=60, cmds_per_node=500` ran in 2 h 37 min for 160 core-hours.
 
-For a 286-million-read marine sediment sample, Phase 1 needed ~15 h on 18 threads + 220 GB on `bigmem`. Phase 2 took ~19 h with `max_nodes=cmds_per_node=100` and 5 GB sub-jobs, for ~1,800 core-hours.
+For a 286-million-read marine sediment sample, Phase 1 needed ~15 h on 18 threads + 220 GB on a big-memory node (now the `hugemem` partition). Phase 2 took ~19 h with `max_nodes=10, cmds_per_node=50` and 5 GB sub-jobs, for ~1,800 core-hours.
 
 ## Upstream
 

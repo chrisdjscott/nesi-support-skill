@@ -1,6 +1,6 @@
 ---
 name: nesi-hpc
-description: Run computational workloads on NeSI's Mahuika HPC cluster (operated by REANNZ). Covers SSH access, Slurm job submission, the module system, filesystems (/home, /nesi/project, /nesi/nobackup), GPU usage, parallel/MPI/OpenMP, Apptainer containers, debugging job efficiency, and per-application guides for 56 supported scientific packages. Use when a user asks how to submit a job to Mahuika, run software on NeSI, request GPUs, configure Slurm directives, manage storage on the cluster, or troubleshoot HPC job failures (OOM kills, low priority, missing modules).
+description: Run computational workloads on NeSI's Mahuika HPC cluster (operated by REANNZ). Covers SSH access, Slurm job submission, the module system, filesystems (/home, /nesi/project, /nesi/nobackup), GPU usage, parallel/MPI/OpenMP, Apptainer containers, debugging job efficiency, and per-application guides for 53 supported scientific packages. Use when a user asks how to submit a job to Mahuika, run software on NeSI, request GPUs, configure Slurm directives, manage storage on the cluster, or troubleshoot HPC job failures (OOM kills, low priority, missing modules).
 ---
 
 # NeSI Mahuika HPC
@@ -40,9 +40,9 @@ Load the matching reference file when the user's question lands in that area.
 
 ### Slurm and batch jobs
 
-- **`references/slurm.md`**: Slurm command cheat sheet (`sbatch`, `squeue`, `sacct`, `scancel`, `sshare`, `sinfo`), all common `#SBATCH` directives, environment variables, fair share, prioritisation, hard limits, best practice. **Load for**: any question about writing a batch script, choosing directives, queue/priority issues, `sacct`/`squeue` usage.
+- **`references/slurm.md`**: Slurm command cheat sheet (`sbatch`, `squeue`, `sacct`, `scancel`, `sshare`, `sinfo`), all common `#SBATCH` directives, environment variables, fair share, prioritisation, hard limits, scron recurring jobs, best practice. **Load for**: any question about writing a batch script, choosing directives, queue/priority issues, `sacct`/`squeue` usage, cron-style recurring jobs.
 - **`references/slurm-examples.md`**: Worked examples for job arrays (incl. multidimensional), GPU jobs, checkpointing, interactive sessions via `srun`/`salloc`, temporary directories (`$TMPDIR`, `--gres=ssd`, in-memory tmpfs). **Load for**: parameter sweeps, embarrassingly parallel work, GPU job templates, interactive shells, temp-file handling.
-- **`references/hardware.md`**: Mahuika partitions (`milan`, `genoa`), node memory tiers, GPU types and counts (A100 80/40 GB, H100, L4), per-job and per-user limits. **Load for**: choosing a partition, selecting a GPU type, "why is my job pending", deciding `--mem` ratios.
+- **`references/hardware.md`**: Mahuika partitions (`milan`, `genoa`, `hugemem`), node memory tiers, GPU types and counts (A100 80 GB, RTX PRO 6000, H100 NVL, L4), GPU workload guidance, per-job and per-user limits. **Load for**: choosing a partition, selecting a GPU type, "why is my job pending", deciding `--mem` ratios.
 
 ### Storage
 
@@ -51,7 +51,7 @@ Load the matching reference file when the user's question lands in that area.
 ### Software stack
 
 - **`references/modules.md`**: Lmod usage (`module load/avail/spider/purge/list`), version pinning, toolchain compatibility (`foss-2023a`, `intel-2020a`), installing your own software in `/nesi/project`, linking against EasyBuild libraries (`$EBROOT<NAME>`). **Load for**: missing software, toolchain conflicts, building from source, "which Python version".
-- **`references/software/index.md`**: Categorised index of all 56 per-application pages. **Load this first** when a user names a specific package (e.g. GROMACS, AlphaFold, ANSYS); then load the specific `software/<package>.md`.
+- **`references/software/index.md`**: Categorised index of all 53 per-application pages. **Load this first** when a user names a specific package (e.g. GROMACS, AlphaFold, ANSYS); then load the specific `software/<package>.md`.
 
 ### Parallel and accelerated computing
 

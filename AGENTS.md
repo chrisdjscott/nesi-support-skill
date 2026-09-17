@@ -160,8 +160,8 @@ Current `LOCAL-NOTE` blocks:
 
 - **Operator name**: NeSI is now operated by REANNZ (transition in 2025). Older upstream pages may still say "NeSI" as the operator. The skill currently writes "NeSI's Mahuika HPC cluster (operated by REANNZ)". Keep that phrasing.
 - **Login host**: `mahuika` via the `lander` jump host. Older docs reference `mahuika01`, `mahuika02`, or `ssh nesi`. Newer docs use `ssh mahuika`. Both still work for many users.
-- **Partitions**: `milan` and `genoa` currently. The older `large` and `bigmem` partitions are gone. Do not reintroduce them.
-- **GPU types**: A100 (80 GB and 40 GB), H100, L4. P100 was retired.
+- **Partitions**: `milan`, `genoa`, and `hugemem` currently. `hugemem` (Intel Cascade Lake, 1.5-6 TB) must be requested explicitly. The older `large`, `bigmem`, and A100-40GB-genoa setups are gone. Do not reintroduce them.
+- **GPU types**: A100 SXM4 (80 GB, milan only), RTX PRO 6000 (96 GB), H100 NVL (94 GB), L4 (24 GB). Slurm type strings are lower-case (`a100`, `pro_6000`, `h100`, `l4`). P100, A40, and the genoa A100 40 GB were retired.
 - **Filesystem quotas**: `/home` 20 GB, `/nesi/project` 100 GB soft / 110 GB hard, `/nesi/nobackup` 10 TB soft / 12 TB hard, `nobackup` auto-cleans files untouched for 90 days. Cross-check with `Storage/Filesystems_and_Quotas.md` before changing.
 - **Toolchains**: `foss-2023a`, `intel-2022a`, etc. Newer toolchains appear yearly. Update `references/modules.md` when EasyBuild rolls one out.
 - **Example project code**: always `nesi99991`. Do not use real project codes.
