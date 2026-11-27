@@ -58,7 +58,7 @@ First time prompts:
 
 1. Accept host key (type `yes`).
 2. Browser link `https://iam.nesi.org.nz/realms/public/device?user_code=XXXX-XXXX`, open it (Ctrl-click in most terminals).
-3. Pick institution - sign in.
+3. Pick institution, then sign in.
 4. **Trusted device?** Yes if it's your personal laptop on a private network (skips MFA for 7 days). No if shared/incognito (you'll re-MFA every login).
 5. If trusting, name the device (unique).
 6. Scan TOTP QR code with authenticator app, enter 6-digit code.
@@ -176,6 +176,8 @@ The IAM provider treats new browsers/incognito sessions as new devices. Either r
 ### Replacing your TOTP
 
 If you change phones, you have to replace your Additional Authentication Credentials via `my.nesi.org.nz`. See <https://docs.nesi.org.nz/Getting_Started/FAQs/How_do_I_replace_my_Additional_Authentication_Credentials/>.
+
+To add a backup authenticator device, remove an old one, or sign out unrecognised sessions, use the Account Console at <https://iam.nesi.org.nz/realms/public/account/> (Tuakiri login plus 6-digit code). It cannot help if the only authenticator is lost. Trusted devices are managed separately in `my.nesi.org.nz`.
 
 ### Locale errors at login
 

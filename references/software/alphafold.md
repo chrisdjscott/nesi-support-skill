@@ -34,7 +34,7 @@ echo $AF2DB                    # /opt/nesi/db/alphafold_db/2023-04
 #SBATCH --time          02:00:00
 #SBATCH --mem           24G
 #SBATCH --cpus-per-task 8
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --output        %j.out
 
 module purge
@@ -104,7 +104,7 @@ Older versions are run via Singularity. Image and definition at `/opt/nesi/conta
 #SBATCH --time          02:00:00
 #SBATCH --mem           30G
 #SBATCH --cpus-per-task 6
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --output        slurmout.%j.out
 
 module purge
@@ -169,7 +169,7 @@ AlphaFold 3 does not infer paths automatically: pass databases (under `$AF3DB`),
 #SBATCH --time          02:00:00
 #SBATCH --mem           24G
 #SBATCH --cpus-per-task 8
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --output        %j.out
 
 module purge
@@ -225,7 +225,7 @@ The values above target small proteins (~100 residues, e.g. 3RGK). Scale `--mem`
 If you exceed L4 / 24 GB VRAM, request the 80 GB A100 (milan only):
 
 ```sl
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 ```
 
 ## Troubleshooting

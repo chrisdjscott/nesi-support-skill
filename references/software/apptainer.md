@@ -28,6 +28,7 @@ By default Apptainer writes to `~/.apptainer`. Redirect to nobackup so you don't
 export APPTAINER_CACHEDIR="/nesi/nobackup/nesi99991/$USER/apptainer-cache"
 export APPTAINER_TMPDIR="${APPTAINER_CACHEDIR}"
 mkdir -p "$APPTAINER_CACHEDIR"
+setfacl -b "$APPTAINER_TMPDIR"
 ```
 
 See `../containers.md` for full details.

@@ -2,25 +2,7 @@
 
 Community Earth System Model (NCAR). Coupled atmosphere / ocean / land / sea-ice / land-ice / river-runoff climate model, with the CIME case-control system driving builds and runs.
 
-Note: the upstream guide pre-dates the June 2025 migration. Treat the workflow below as a starting point and contact NeSI support for current paths.
-
-## Prerequisites on Mahuika
-
-```bash
-module load git              # newer than system default
-```
-
-Wrap in a `SYSTEM_STRING` check in `~/.bashrc` if you also use Maui.
-
-CESM components require Git LFS. Install locally:
-
-```bash
-wget https://github.com/git-lfs/git-lfs/releases/download/v3.5.1/git-lfs-linux-amd64-v3.5.1.tar.gz
-tar xf git-lfs-linux-amd64-v3.5.1.tar.gz
-cd git-lfs-3.5.1 && ./install.sh --local
-export PATH=$HOME/.local/bin:$PATH
-git lfs version
-```
+Based on CESM 2.1.5 and the Mahuika CIME configuration in `nesi/nesi-cesm-config` (updated October 2026).
 
 ## Downloading CESM
 
@@ -46,7 +28,7 @@ cp config_batch.xml config_compilers.xml ~/.cime/
 mkdir -p /nesi/nobackup/${PROJECT_CODE}/cesm/inputdata
 ```
 
-Check the `DIN_LOC_ROOT` path in `~/.cime/config_machines.xml` exists. Share input data across users in a project rather than duplicating it; CESM input is large.
+This overwrites any existing `~/.cime` configuration. Check the `DIN_LOC_ROOT` path in `~/.cime/config_machines.xml` exists. Share input data across users in a project rather than duplicating it; CESM input is large.
 
 ## Creating and running a test case
 
@@ -64,7 +46,7 @@ cd /nesi/nobackup/${PROJECT_CODE}/$USER/cesm/output/b.e20.B1850.f19_g17.test
 ./xmlchange --subgroup case.run JOB_WALLCLOCK_TIME="00:20:00"
 
 ./case.setup
-./preview_run
+./preview_run             # expect 6 nodes, 192 tasks, 32 per node
 ./case.build              # downloads input data; can take a while
 ./xmlchange DOUT_S=FALSE  # disable short-term archiving
 ./case.submit

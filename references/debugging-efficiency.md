@@ -51,7 +51,7 @@ Key columns:
 Caveats:
 
 - Slurm samples every 30 s. Short memory spikes can OOM-kill without showing in MaxRSS.
-- MaxRSS excludes tmpfs files in `/tmp` or `$TMPDIR` (in-RAM). If your job writes large temp files there, account for them in `--mem`.
+- MaxRSS includes shared memory, so tmpfs files in `/tmp` or `$TMPDIR` (in-RAM) count towards it. Account for large temp files there in `--mem`.
 
 ## Live: watching a running job
 

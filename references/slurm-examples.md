@@ -4,7 +4,7 @@ Templates for common Mahuika job patterns. Edit project code (`nesi99991`), time
 
 ## Job arrays
 
-Use for embarrassingly parallel work (parameter sweeps, independent inputs). Array max is 1000 tasks.
+Use for embarrassingly parallel work (parameter sweeps, independent inputs). Prefer one array over submitting the same job in a loop: one job ID to watch or cancel and far less scheduler load. Each task counts towards the 1000 queued-job limit, so an array has at most 1000 tasks.
 
 ### Basic array
 
@@ -55,12 +55,16 @@ infile=${files[$SLURM_ARRAY_TASK_ID]}
 
 ### Per-task output directories
 
-Env vars do not expand in `#SBATCH`; use Slurm tokens (`%a`).
+Env vars do not expand in `#SBATCH`; use Slurm tokens (`%a` task index, `%A` array job ID).
 
 ```sl
 #SBATCH --output  outputs/run_%a/slurm.out
 #SBATCH --error   outputs/run_%a/slurm.err
 ```
+
+Create the `outputs/run_*` directories before submitting; Slurm does not create them.
+
+To start dependent work after an array (whole array with `afterok`, per task with `aftercorr`, or rerunning only failed tasks), see `references/slurm.md#job-dependencies`.
 
 ### Multidimensional sweep
 
@@ -110,7 +114,8 @@ GPU types (request lower-case; the scheduler routes to the right partition):
 
 | Request | Partition | Notes |
 | --- | --- | --- |
-| `a100:1` | `milan` | A100 SXM4 80 GB, 4 per node, only 4-GPU option |
+| `a100:1` | `milan` | Either A100 type. Add `--constraint=a100_80gb` for SXM4 80 GB (4 per node, NVLink, only 4-GPU option) |
+| `a100:1` + `--constraint=a100_40gb` | `milan` | A100 PCIe 40 GB, 3 per node, no NVLink |
 | `pro_6000:1` | `genoa` | RTX PRO 6000 96 GB, 2 per node, slow fp64 |
 | `h100:1` | `genoa` | H100 NVL 94 GB, 2 per node, NVLink pair |
 | `l4:1` | `genoa` | L4 24 GB, 4 per node, slow fp64 |
@@ -121,7 +126,7 @@ L4 and RTX PRO 6000 lack usable fp64; see `references/hardware.md` for choosing 
 
 ### Choosing the right GPU
 
-Before committing to a GPU type for production, run a short test job on each candidate and compare `seff` output (GPU utilisation, VRAM, walltime) against the compute-unit cost. Use the `debug` QoS so the test starts quickly, and profile at high frequency:
+Before committing to a GPU type for production, run a short one-off test job on each candidate and compare `seff` output (GPU utilisation, VRAM, walltime) against the compute-unit cost. The `debug` QoS suits this kind of one-off test (not regular GPU jobs, see `references/slurm.md#debug-qos`). Profile at high frequency:
 
 ```sl
 #SBATCH --time         00:15:00
@@ -220,7 +225,23 @@ TMPDIR=${TMPDIR:=/tmp}
 
 ## Checkpointing
 
-Long jobs should checkpoint periodically so a node failure doesn't waste days of work. Most scientific packages have a native checkpoint mode (e.g. GROMACS `-cpi`, LAMMPS `restart`). For generic processes, `dmtcp` can be used. See application docs in `references/software/`.
+Long jobs should checkpoint periodically so a node failure doesn't waste days of work, and checkpointing is the way to run beyond the 21-day walltime limit. Most scientific packages have a native checkpoint mode (e.g. GROMACS `-cpi`, LAMMPS `restart`). For generic processes, `dmtcp` can be used. See application docs in `references/software/`.
+
+A self-resubmitting job must have a stop condition or it resubmits forever:
+
+```sl
+#!/bin/bash -e
+#SBATCH --account  nesi99991
+#SBATCH --time     12:00:00
+
+# The program creates "finished" once all work is done.
+if [ -f finished ]; then
+    exit 0
+fi
+
+sbatch --dependency afterok:${SLURM_JOB_ID} "$0"
+<program that resumes from its checkpoint and exits cleanly before the walltime>
+```
 
 ## Combining short jobs
 

@@ -27,6 +27,7 @@ See <http://opensees.berkeley.edu/OpenSees/parallel/TNParallelProcessing.pdf> fo
 #SBATCH --cpus-per-task 1
 #SBATCH --mem           512M
 
+module purge
 module load OpenSees/<version>
 OpenSees frame.tcl
 ```
@@ -43,6 +44,7 @@ Often run as a job array for parameter sweeps. See `../slurm-examples.md` for ar
 #SBATCH --ntasks      16
 #SBATCH --mem-per-cpu 1G
 
+module purge
 module load OpenSees/<version>
 srun OpenSeesMP frame.tcl
 ```

@@ -1,6 +1,6 @@
 ---
 name: nesi-hpc
-description: Run computational workloads on NeSI's Mahuika HPC cluster (operated by REANNZ). Covers SSH access, Slurm job submission, the module system, filesystems (/home, /nesi/project, /nesi/nobackup), GPU usage, parallel/MPI/OpenMP, Apptainer containers, debugging job efficiency, and per-application guides for 53 supported scientific packages. Use when a user asks how to submit a job to Mahuika, run software on NeSI, request GPUs, configure Slurm directives, manage storage on the cluster, or troubleshoot HPC job failures (OOM kills, low priority, missing modules).
+description: Run computational workloads on NeSI's Mahuika HPC cluster (operated by REANNZ). Covers SSH access, Slurm job submission, the module system, filesystems (/home, /nesi/project, /nesi/nobackup), GPU usage, parallel/MPI/OpenMP, Apptainer containers, debugging job efficiency, REANNZ rules for AI agents and coding assistants on the cluster, and per-application guides for 53 supported scientific packages. Use when a user asks how to submit a job to Mahuika, run software on NeSI, request GPUs, configure Slurm directives, manage storage on the cluster, run Claude Code or another agent on Mahuika, or troubleshoot HPC job failures (OOM kills, low priority, missing modules).
 ---
 
 # NeSI Mahuika HPC
@@ -12,8 +12,9 @@ Mahuika is a CPU+GPU HPC cluster run by REANNZ (formerly NeSI) for New Zealand r
 - **Login**: `ssh mahuika` (after IAM/MFA + optional SSH key). See `references/access-and-login.md`. Users who followed old documentation may have `ssh nesi` configured.
 - **Submit a job**: `sbatch myjob.sl`. Monitor with `squeue --me`, inspect with `sacct -j <id>` and `seff <id>`.
 - **Load software**: `module spider <name>`, `module load <name>/<version>`.
-- **Store data**: `/home` (20 GB, backed up, no jobs), `/nesi/project/<code>` (~100 GB, persistent, backed up), `/nesi/nobackup/<code>` (~10 TB, scratch, auto-cleaned after 90 days), Freezer (long-term tape).
-- **Account**: every job needs `--account=<project_code>` (e.g. `nesi99991`).
+- **Store data**: `/home` (20 GB, backed up, no jobs), `/nesi/project/<code>` (~100 GB, persistent, backed up), `/nesi/nobackup/<code>` (~2 TB, scratch, auto-cleaned after 90 days), Freezer (long-term tape).
+- **Account**: every job needs `--account=<project_code>` (e.g. `nesi99991`). Ask the user which project; don't guess.
+- **Agents**: if you are running commands on Mahuika yourself, REANNZ agent rules apply (supervised only, poll `squeue --me` no faster than ~60 s, no tunnels, no debug QoS for routine work). Load `references/ai-agents.md` before acting.
 
 ## Minimum-viable batch script
 
@@ -42,7 +43,7 @@ Load the matching reference file when the user's question lands in that area.
 
 - **`references/slurm.md`**: Slurm command cheat sheet (`sbatch`, `squeue`, `sacct`, `scancel`, `sshare`, `sinfo`), all common `#SBATCH` directives, environment variables, fair share, prioritisation, hard limits, scron recurring jobs, best practice. **Load for**: any question about writing a batch script, choosing directives, queue/priority issues, `sacct`/`squeue` usage, cron-style recurring jobs.
 - **`references/slurm-examples.md`**: Worked examples for job arrays (incl. multidimensional), GPU jobs, checkpointing, interactive sessions via `srun`/`salloc`, temporary directories (`$TMPDIR`, `--gres=ssd`, in-memory tmpfs). **Load for**: parameter sweeps, embarrassingly parallel work, GPU job templates, interactive shells, temp-file handling.
-- **`references/hardware.md`**: Mahuika partitions (`milan`, `genoa`, `hugemem`), node memory tiers, GPU types and counts (A100 80 GB, RTX PRO 6000, H100 NVL, L4), GPU workload guidance, per-job and per-user limits. **Load for**: choosing a partition, selecting a GPU type, "why is my job pending", deciding `--mem` ratios.
+- **`references/hardware.md`**: Mahuika partitions (`milan`, `genoa`, `hugemem`), node memory tiers, GPU types and counts (A100 80 GB and 40 GB, RTX PRO 6000, H100 NVL, L4), GPU workload guidance, per-job and per-user limits. **Load for**: choosing a partition, selecting a GPU type, "why is my job pending", deciding `--mem` ratios.
 
 ### Storage
 
@@ -55,16 +56,20 @@ Load the matching reference file when the user's question lands in that area.
 
 ### Parallel and accelerated computing
 
-- **`references/parallel-computing.md`**: Shared memory (OpenMP, `--cpus-per-task`), distributed memory (MPI, `--ntasks`, `srun`), hybrid jobs, simultaneous multithreading (SMT, `--threads-per-core=2`), thread placement (`OMP_PROC_BIND`, `OMP_PLACES`), Dask-MPI. **Load for**: multithreaded job setup, MPI launchers, OpenMP tuning, scaling questions.
+- **`references/parallel-computing.md`**: Shared memory (OpenMP, `--cpus-per-task`), distributed memory (MPI, `--ntasks`, `srun`), hybrid jobs, simultaneous multithreading (SMT, `--threads-per-core=2`), thread placement (`OMP_PROC_BIND`, `OMP_PLACES`), NUMA domains (`--cores-per-socket`, `--mem-bind`), Dask-MPI. **Load for**: multithreaded job setup, MPI launchers, OpenMP tuning, NUMA placement, scaling questions.
 - **`references/containers.md`**: Apptainer on Mahuika: cache setup (`APPTAINER_CACHEDIR` on nobackup), pulling Docker images, building with `--fakeroot` via Slurm, `apptainer exec --nv` for GPU containers, NVIDIA NGC examples. **Load for**: Docker/Singularity images, custom container builds, NGC images, GPU containers.
 
 ### Debugging and tuning
 
 - **`references/debugging-efficiency.md`**: `seff`, `sacct --format`, `htop` over SSH on running nodes, OOM kills, `slurmstepd: oom-kill`, common crash causes, Slurm native profiling (`--profile=task`, `profile_plot`), job scaling analysis. **Load for**: failed jobs, OOM, low memory/CPU efficiency, profiling, "why does my job crash".
 
+### AI agents
+
+- **`references/ai-agents.md`**: REANNZ rules for AI agents and coding assistants on Mahuika (supervision, no tunnels or independent logins, slow scoped polling, one session, data sharing, approval modes), the `mahuika-agents` install script and skills, Claude Code setup on a login node. **Load whenever you are an agent acting on Mahuika** (running commands, submitting jobs, polling), and for questions about using Claude Code, Codex, Copilot or other agents on the cluster.
+
 ### Access and connectivity
 
-- **`references/access-and-login.md`**: SSH config with `lander` jump host, IAM/MFA login flow, optional `mahuika_key` SSH key, trusted devices, VSCode Remote-SSH, MobaXterm/WSL/Git Bash on Windows, X11 forwarding, port forwarding, outbound internet access from login and compute nodes (direct, no proxy). **Load for**: first-time login, SSH troubleshooting, "Account is not ready", connection drops, whether jobs can reach the internet or need a proxy, licence-server IP allowlisting.
+- **`references/access-and-login.md`**: SSH config with `lander` jump host, IAM/MFA login flow, Account Console for backup authenticators and sessions, optional `mahuika_key` SSH key, trusted devices, VSCode Remote-SSH, MobaXterm/WSL/Git Bash on Windows, X11 forwarding, port forwarding, outbound internet access from login and compute nodes (direct, no proxy). **Load for**: first-time login, SSH troubleshooting, "Account is not ready", connection drops, whether jobs can reach the internet or need a proxy, licence-server IP allowlisting.
 
 ## Conventions used in this skill
 

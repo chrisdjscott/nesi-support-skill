@@ -56,7 +56,7 @@ Set `Hardware == GPU` in the `.tcf`.
 #SBATCH --job-name      TUFLOW
 #SBATCH --time          01:00:00
 #SBATCH --mem           4G
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 
 module purge
 module load CUDA
@@ -109,7 +109,7 @@ sleep 10 && cmu --import --file ~/my_licence_key.wbc
 srun tuflowfv my_model.fvc
 ```
 
-For GPU, set `Hardware == GPU` in the `.fvc`, add `--gpus-per-node A100:1`, and `module load CUDA` as in the Classic GPU example.
+For GPU, set `Hardware == GPU` in the `.fvc`, add `--gpus-per-node a100:1`, and `module load CUDA` as in the Classic GPU example.
 
 ## Upstream
 
