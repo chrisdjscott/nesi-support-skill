@@ -69,8 +69,16 @@ fluent 3ddp -g -i wing.in
 module purge
 module load ANSYS/<version>
 
-fluent 3ddp -g -t ${SLURM_NTASKS} -i wing.in
+HOSTFILE=${PWD}/hosts.${SLURM_JOB_ID}
+srun hostname -s | sort > ${HOSTFILE}
+fluent 3ddp -g -t ${SLURM_NTASKS} -cnf=${HOSTFILE} -i wing.in
 ```
+
+Fluent does not read Slurm's node list, so give it a host file with `-cnf`. Without it, 2023R1 and later fail with "Requested node configuration is not available", even on one node. The path must be absolute (some versions reject relative paths). Version exceptions: 2021R2 uses `-mpi=openmpi` instead of `-cnf`; 19.2 needs neither; with `-mpi=openmpi` on 2025R2, `unset FLUENT_MPIRUN_FLAGS` first.
+
+### Interactive GUI on an allocation
+
+From an `salloc` allocation on the login node, write the host file the same way and run `fluent 3ddp -t ${SLURM_NTASKS} -cnf=${HOSTFILE}`. Without `-cnf` every Fluent process runs on the login node. Fluent's host table should show only `host` on the login node and compute processes on the allocated nodes.
 
 ### Checkpointing
 

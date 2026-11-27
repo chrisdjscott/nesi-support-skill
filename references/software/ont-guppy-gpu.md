@@ -21,7 +21,7 @@ CPU basecalling is not recommended. `--device auto` selects the GPU.
 #!/bin/bash -e
 #SBATCH --account        nesi99991
 #SBATCH --job-name       guppy
-#SBATCH --gpus-per-node  A100:1
+#SBATCH --gpus-per-node  a100:1
 #SBATCH --mem            6G
 #SBATCH --cpus-per-task  4
 #SBATCH --time           10:00:00

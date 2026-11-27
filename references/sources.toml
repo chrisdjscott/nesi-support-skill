@@ -23,7 +23,9 @@
   "docs/Batch_Computing/SLURM-Best_Practice.md",
   "docs/Batch_Computing/Job_Limits.md",
   "docs/Batch_Computing/Job_Prioritisation.md",
-  "docs/Batch_Computing/Fair_Share.md",
+  "docs/Batch_Computing/Fairshare.md",
+  "docs/Batch_Computing/Debug_QoS.md",
+  "docs/Batch_Computing/Job_Dependencies.md",
   "docs/Batch_Computing/Checking_Resource_Usage.md",
   "docs/Batch_Computing/scron.md",
   "docs/Getting_Started/Cheat_Sheets/Slurm-Reference_Sheet.md",
@@ -53,7 +55,12 @@
 ]
 "references/debugging-efficiency.md" = [
   "docs/Software/Profiling_and_Debugging/",
-  "docs/Getting_Started/Job_Efficiency_Review.md",
+  "docs/Getting_Started/Getting_Help/Job_Efficiency_Review.md",
+]
+"references/ai-agents.md" = [
+  "docs/Software/AI_Agents/",
+  "docs/Announcements/AI_Agent_Rules.md",
+  "docs/Announcements/Debug_QoS_Change.md",
 ]
 "references/software/index.md" = [
   "docs/Software/Available_Applications/",

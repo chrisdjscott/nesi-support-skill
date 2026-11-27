@@ -23,7 +23,7 @@ CPU basecalling is too slow to be useful; always request a GPU. `--device 'cuda:
 #!/bin/bash -e
 #SBATCH --account        nesi99991
 #SBATCH --job-name       dorado
-#SBATCH --gpus-per-node  A100:1
+#SBATCH --gpus-per-node  a100:1
 #SBATCH --mem            6G
 #SBATCH --cpus-per-task  4
 #SBATCH --time           00:10:00

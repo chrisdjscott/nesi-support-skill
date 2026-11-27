@@ -78,8 +78,7 @@ Hybrid parallelism (MPI + threads, `--cpus-per-task>1`) is usually more efficien
 #SBATCH --account       nesi99991
 #SBATCH --job-name      gromacs-gpu
 #SBATCH --time          02:00:00
-#SBATCH --partition     genoa
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --cpus-per-task 8
 #SBATCH --mem           8G
 

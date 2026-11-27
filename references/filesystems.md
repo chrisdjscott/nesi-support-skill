@@ -14,7 +14,7 @@ storage_quota
 | --- | --- | --- | --- | --- |
 | `/home/<user>` | 20 GB | Daily, kept 7 days | Fast | 180 days after you leave all active projects |
 | `/nesi/project/<code>` | 100 GB (110 GB hard) | Daily, kept 7 days | Fast | 90 days after project's last HPC allocation |
-| `/nesi/nobackup/<code>` | 10 TB (12 TB hard) | Weekly Fri 06:00, kept 3 weeks | Fast | Files untouched 90 days are auto-deleted |
+| `/nesi/nobackup/<code>` | 2 TB | Weekly Fri 06:00, kept 3 weeks | Fast | Files untouched 90 days are auto-deleted |
 | Freezer | per allocation |, | Slow (tape) | 180 days after Freezer allocation ends |
 
 Each filesystem is accessible via native mount, SCP, and Globus (Freezer uses S3).
@@ -90,7 +90,7 @@ gunzip -c /search/autocleaner/filelists/current/nesi99991.gz | xargs -d '\n' ls 
 ### Deleting your auto-clean candidates yourself
 
 ```bash
-# T = 90 minus days until next cleanup (e.g. 8 days away - T=82)
+# T = 90 minus days until next cleanup (e.g. 8 days away gives T=82)
 find /nesi/nobackup/nesi99991 -type f -atime +82 -ctime +82 -delete
 ```
 

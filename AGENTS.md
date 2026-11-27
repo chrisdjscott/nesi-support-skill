@@ -26,6 +26,7 @@ A Claude Code / Agent SDK skill that teaches an agent how to use NeSI's Mahuika 
 ├── references/
 │   ├── sources.toml             # Canonical derivative-to-upstream mapping
 │   ├── access-and-login.md
+│   ├── ai-agents.md
 │   ├── containers.md
 │   ├── debugging-efficiency.md
 │   ├── filesystems.md
@@ -35,7 +36,7 @@ A Claude Code / Agent SDK skill that teaches an agent how to use NeSI's Mahuika 
 │   ├── slurm.md
 │   ├── slurm-examples.md
 │   └── software/
-│       ├── index.md             # Categorised table of all 55 per-app files
+│       ├── index.md             # Categorised table of all 53 per-app files
 │       └── <package>.md         # One file per centrally-installed package
 └── support-docs/                # Submodule, do not edit in place
     └── docs/
@@ -155,14 +156,18 @@ Rules:
 Current `LOCAL-NOTE` blocks:
 
 - `references/access-and-login.md` (`outbound-internet`): login and compute nodes have direct outbound internet, no proxy required; outbound IP range for licence-server allowlisting.
+- `references/hardware.md` (`a100-40gb-node-count`): 3 A100 40 GB nodes per `sinfo` and `slurm-limits.json`, where upstream `Hardware.md` says 2. Remove once upstream agrees.
+- `references/hardware.md` (`genoa-single-socket-nodes`): 4 single-socket 84-core genoa nodes (`l13` to `l16`) present in `sinfo` and `slurm-limits.json` but missing from upstream `Hardware.md`.
 
 ## Things that drift and need watching
 
 - **Operator name**: NeSI is now operated by REANNZ (transition in 2025). Older upstream pages may still say "NeSI" as the operator. The skill currently writes "NeSI's Mahuika HPC cluster (operated by REANNZ)". Keep that phrasing.
 - **Login host**: `mahuika` via the `lander` jump host. Older docs reference `mahuika01`, `mahuika02`, or `ssh nesi`. Newer docs use `ssh mahuika`. Both still work for many users.
-- **Partitions**: `milan`, `genoa`, and `hugemem` currently. `hugemem` (Intel Cascade Lake, 1.5-6 TB) must be requested explicitly. The older `large`, `bigmem`, and A100-40GB-genoa setups are gone. Do not reintroduce them.
-- **GPU types**: A100 SXM4 (80 GB, milan only), RTX PRO 6000 (96 GB), H100 NVL (94 GB), L4 (24 GB). Slurm type strings are lower-case (`a100`, `pro_6000`, `h100`, `l4`). P100, A40, and the genoa A100 40 GB were retired.
-- **Filesystem quotas**: `/home` 20 GB, `/nesi/project` 100 GB soft / 110 GB hard, `/nesi/nobackup` 10 TB soft / 12 TB hard, `nobackup` auto-cleans files untouched for 90 days. Cross-check with `Storage/Filesystems_and_Quotas.md` before changing.
+- **Partitions**: `milan`, `genoa`, and `hugemem` currently. `hugemem` (Intel Cascade Lake, 1.5-6 TB) must be requested explicitly. The older `large`, `bigmem`, and genoa A100 40 GB setups are gone. Do not reintroduce them.
+- **GPU types**: A100 SXM4 80 GB (milan, 4 per node, NVLink), A100 PCIe 40 GB (milan, 3 per node, no NVLink), RTX PRO 6000 (96 GB), H100 NVL (94 GB), L4 (24 GB). Slurm type strings are lower-case (`a100`, `pro_6000`, `h100`, `l4`); `a100` matches both A100 types, select with `--constraint=a100_80gb` or `a100_40gb`. P100, A40, and the genoa A100 40 GB were retired.
+- **Filesystem quotas**: `/home` 20 GB, `/nesi/project` 100 GB soft / 110 GB hard, `/nesi/nobackup` 2 TB, `nobackup` auto-cleans files untouched for 90 days. Cross-check with `Storage/Filesystems_and_Quotas.md` before changing.
+- **Slurm limits**: upstream `Job_Limits.md`, `Debug_QoS.md` and `Job_Prioritisation.md` render numbers from `support-docs/docs/assets/slurm-limits.json` via `support-docs/macro_hooks.py` (CPU counts there are hardware threads; the docs halve them). Read the JSON, not the Markdown templates, when checking limits. Debug QoS is currently 15 min, 1 job, 2 nodes, 168 cores, 512 GB, 2 GPUs.
+- **AI agent rules**: `references/ai-agents.md` mirrors `Software/AI_Agents/` and the REANNZ `mahuika-agents` repo. Re-check it whenever those change; the rules are binding on agents using this skill.
 - **Toolchains**: `foss-2023a`, `intel-2022a`, etc. Newer toolchains appear yearly. Update `references/modules.md` when EasyBuild rolls one out.
 - **Example project code**: always `nesi99991`. Do not use real project codes.
 

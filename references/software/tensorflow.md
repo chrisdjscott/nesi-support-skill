@@ -99,7 +99,7 @@ Set TensorFlow up with any method above (with `pip`, use `tensorflow[and-cuda]`)
 #SBATCH --account       nesi99991
 #SBATCH --job-name      tensorflow-gpu
 #SBATCH --time          01:00:00
-#SBATCH --gpus-per-node L4:1
+#SBATCH --gpus-per-node l4:1
 #SBATCH --cpus-per-task 2
 #SBATCH --mem           8G
 
@@ -115,7 +115,7 @@ See `../slurm-examples.md#gpu-jobs` for GPU type selection.
 ## Gotchas
 
 - `tf.config.list_physical_devices('GPU')` empty: you forgot `--gpus-per-node`, or a pip-installed CPU-only wheel is shadowing the GPU build (reinstall with `tensorflow[and-cuda]`).
-- OOM at startup: model too large for the GPU (L4 has 24 GB). Request `--gpus-per-node A100:1` or shard with `tf.distribute.MirroredStrategy`.
+- OOM at startup: model too large for the GPU (L4 has 24 GB). Request `--gpus-per-node a100:1` or shard with `tf.distribute.MirroredStrategy`.
 - Do not `pip install tensorflow` on top of `tensorflow[and-cuda]`; the CPU wheel overwrites the GPU build.
 - Reproducibility: `tf.keras.utils.set_random_seed(...)` and `tf.config.experimental.enable_op_determinism()`.
 

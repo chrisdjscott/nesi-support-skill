@@ -10,13 +10,17 @@ Apptainer caches in `~/.apptainer` by default, but `/home` is only 20 GB. Redire
 export APPTAINER_CACHEDIR=/nesi/nobackup/nesi99991/apptainer-cache
 export APPTAINER_TMPDIR=$APPTAINER_CACHEDIR
 mkdir -p $APPTAINER_CACHEDIR
+setfacl -b $APPTAINER_TMPDIR
 ```
+
+`setfacl -b` strips the ACLs the directory inherits from the project tree; upstream applies it wherever `APPTAINER_TMPDIR` is set up, including build jobs.
 
 Persist these in `~/.bashrc`:
 
 ```bash
 echo 'export APPTAINER_CACHEDIR=/nesi/nobackup/nesi99991/apptainer-cache' >> ~/.bashrc
 echo 'export APPTAINER_TMPDIR=$APPTAINER_CACHEDIR' >> ~/.bashrc
+echo 'setfacl -b $APPTAINER_TMPDIR' >> ~/.bashrc
 ```
 
 Replace `nesi99991` with your project code.
@@ -68,6 +72,7 @@ unset APPTAINER_BIND
 export APPTAINER_CACHEDIR=/nesi/nobackup/$SLURM_JOB_ACCOUNT/$USER/apptainer_cache
 export APPTAINER_TMPDIR=$APPTAINER_CACHEDIR
 mkdir -p $APPTAINER_CACHEDIR
+setfacl -b $APPTAINER_TMPDIR
 
 module load Apptainer
 apptainer build --force --fakeroot my_container.sif my_container.def
@@ -138,7 +143,7 @@ In a Slurm job:
 #SBATCH --time          01:00:00
 #SBATCH --ntasks        1
 #SBATCH --cpus-per-task 8
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --mem           16G
 
 module purge
@@ -173,7 +178,7 @@ Run (NAMD example):
 #SBATCH --time          00:30:00
 #SBATCH --ntasks        1
 #SBATCH --cpus-per-task 8
-#SBATCH --gpus-per-node A100:1
+#SBATCH --gpus-per-node a100:1
 #SBATCH --mem           4G
 
 module purge

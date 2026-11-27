@@ -2,7 +2,7 @@
 
 Agent skill for running workloads on NeSI's Mahuika HPC cluster (operated by REANNZ). Condensed from the public [nesi/support-docs](https://github.com/nesi/support-docs).
 
-Covers SSH access, Slurm job submission, the Lmod module system, filesystems (`/home`, `/nesi/project`, `/nesi/nobackup`), GPU usage, MPI/OpenMP, Apptainer containers, debugging job efficiency, and per-application guides for 55 supported scientific packages.
+Covers SSH access, Slurm job submission, the Lmod module system, filesystems (`/home`, `/nesi/project`, `/nesi/nobackup`), GPU usage, MPI/OpenMP, Apptainer containers, debugging job efficiency, and per-application guides for 53 supported scientific packages.
 
 ## What gets shipped
 
@@ -54,7 +54,7 @@ uv run scripts/upstream_drift.py > /tmp/drift.md # what needs reconciling
 
 ## Triggering
 
-The skill activates when a user asks an agent about Mahuika, NeSI, Slurm jobs, modules, GPUs on the cluster, or any of the 55 indexed scientific packages. See the `description:` field in `SKILL.md` for the exact match surface.
+The skill activates when a user asks an agent about Mahuika, NeSI, Slurm jobs, modules, GPUs on the cluster, or any of the 53 indexed scientific packages. See the `description:` field in `SKILL.md` for the exact match surface.
 
 ## Disclaimer
 

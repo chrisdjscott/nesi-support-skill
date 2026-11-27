@@ -51,8 +51,8 @@ The default `OMP_PROC_BIND=false` lets threads migrate between cores, which is o
 
 ### Maximum shared-memory size
 
-- Milan node: 128 physical cores - up to 256 logical CPUs.
-- Genoa node: 168 physical cores - up to 336 logical CPUs.
+- Milan node: 128 physical cores, up to 256 logical CPUs.
+- Genoa node: 168 physical cores, up to 336 logical CPUs.
 
 Once you need more than one node's worth of cores, you must switch to MPI.
 
@@ -156,6 +156,46 @@ srun dask-mpi --nthreads $SLURM_CPUS_PER_TASK --memory-limit 8GB python my_dask_
 ```
 
 `my_dask_script.py` connects to the running scheduler with `Client('SCHEDULER-ADDR')` or, when started with `dask-mpi`, the address is shared via a JSON file.
+
+## NUMA domains
+
+Each Mahuika node is split into NUMA domains (a group of cores plus the memory closest to them). Slurm treats each NUMA domain as a socket, so "socket" in Slurm options and output means NUMA domain.
+
+| Node type | NUMA domains | Cores per domain |
+| --- | --- | --- |
+| Genoa (CPU and GPU) | 8 | 21 |
+| Genoa single-socket (`l13` to `l16`) | 1 | 84 |
+| Milan CPU | 8 | 16 |
+| Milan A100 80 GB | 4 | 16 |
+| Milan A100 40 GB | 8 | 6 |
+| Hugemem 1.5 TB / 6 TB | 2 / 4 | 20 / 22 |
+
+Slurm reserves 2 cores per node for the filesystem client, taken from one or two domains, so those have fewer cores for jobs. Slurm does not guarantee a job's cores sit in one domain even when they would fit. Memory-bound multithreaded or MPI jobs then fetch data across domains and run slower, with runtime varying between identical runs. Most jobs can ignore this.
+
+To keep each task within a domain (Genoa CPU example, use `16` for Milan):
+
+```sl
+#SBATCH --partition        genoa
+#SBATCH --ntasks           8
+#SBATCH --cpus-per-task    1
+#SBATCH --mem-per-cpu      2G
+#SBATCH --cores-per-socket 21
+#SBATCH --threads-per-core 1
+#SBATCH --distribution     *:block:*
+#SBATCH --mem-bind         local
+
+export OMP_PROC_BIND=true
+export OMP_PLACES=cores
+srun MY_PROGRAM
+```
+
+For GPU jobs add `--gres-flags enforce-binding` and `--gpu-bind closest` so the CPUs are near the GPU.
+
+To check placement, run this before the program; compare each task's core IDs with the `NUMA node` lines from `lscpu`:
+
+```bash
+srun bash -c 'echo "Task $SLURM_PROCID on $(hostname): cores $(taskset -c -p $$ | awk "{print \$NF}")"; lscpu | grep -i numa'
+```
 
 ## Job arrays (embarrassingly parallel)
 
